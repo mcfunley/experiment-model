@@ -204,6 +204,24 @@
   }
 
   function set_visits_per_bucket(value) {
+      $('#visits-per-bucket').text(
+          'Visits per day per variant: ' + value
+      );
+  }
+
+  function set_alpha(pct_confidence) {
+      $('#confidence-detail').empty().append(
+          'If you are ', 
+          $('<span class="secondary-calc" />').text(pct_confidence + '%'), 
+          ' confident in a result, this implies that with ',
+          $('<span class="secondary-calc" />').text(100 - pct_confidence + '%'), 
+          ' probability the observed difference is in fact due to chance.'
+      );
+  }
+
+  function set_conversions(visits, rate_pct) {
+      var conv = visits * rate_pct / 100;
+      $('#converting-visitors').text('Converting visitors per day: ' + conv);
   }
 
   function detail(el) {
@@ -244,6 +262,8 @@
           var treatment_conversion = 
                   params.conversion * (1 + params.lift / 100.0);
           set_treatment_conv(treatment_conversion);
+          set_conversions(params.visits, params.conversion);
+          set_alpha(params.confidence);
       
           var visits_per_bucket = params.visits / params.variants;
           set_visits_per_bucket(visits_per_bucket);

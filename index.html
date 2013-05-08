@@ -43,6 +43,7 @@
       <div class="row-fluid detail">
         <div class="span7 offset2">
           This is how many versions of your feature you'll be testing at once, including the control. We assume that you will divide the population evenly. So two variants implies a 50/50 test.
+          <div class="secondary-calc" id="visits-per-bucket"></div>
         </div>
       </div>
 
@@ -58,6 +59,7 @@
       <div class="row-fluid detail">
         <div class="span7 offset2">
           This is the percentage of your eligible visitors that currently complete your goal (e.g. purchasing or signing up).
+          <div class="secondary-calc" id="converting-visitors"></div>
         </div>
       </div>
 
@@ -87,7 +89,7 @@
       </div>
 
       <div class="row-fluid detail">
-        <div class="span7 offset2">
+        <div id="confidence-detail" class="span7 offset2">
           If you are 95% confident in a result, this implies that with 5% probability the observed difference is in fact due to chance.
         </div>
       </div>
