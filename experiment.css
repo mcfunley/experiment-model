@@ -1,4 +1,4 @@
-header h1, footer h5, #answer {
+header h1, footer h5, #answer, #share {
     text-align: center;
 }
 
@@ -6,12 +6,17 @@ footer h5 {
     font-weight: normal;
 }
 
-header h1, #answer {
+header h1, #answer-row {
     margin: 40px 0px 40px 0px;
 }
 
-#answer {
+#answer, #share {
     width: 100%;
+}
+
+#share { 
+    line-height: 30px; 
+    font-size: 14px;
 }
 
 #days.short { color: green; }
@@ -26,6 +31,7 @@ header h1, #answer {
     display: none;
     font-size: 14px; 
     line-height: 20px;
+    color: #585858;
 }
 
 input {
@@ -34,6 +40,7 @@ input {
 
 .secondary-calc {
     font-style: italic;
+    font-weight: bold;
 }
 
 .question {
@@ -41,4 +48,6 @@ input {
     line-height: 60px;
 }
 
+.follow iframe {
 
+}
