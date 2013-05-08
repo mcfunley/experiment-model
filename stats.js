@@ -203,9 +203,9 @@
       );
   }
 
-  function set_visits_per_bucket(value) {
-      $('#visits-per-bucket').text(
-          'Visits per day per variant: ' + value
+  function set_treatment_visits(value) {
+      $('#visits-seeing-change').text(
+          'Visits per day seeing the change: ' + value
       );
   }
 
@@ -237,7 +237,7 @@
               conversion: parser.percent('conversion'),
               confidence: parser.percent('confidence'),
               visits: parser.integer('visits'),
-              variants:  parser.integer('variants')
+              percentage:  parser.percent('percentage')
           };
       },
 
@@ -265,32 +265,33 @@
           set_conversions(params.visits, params.conversion);
           set_alpha(params.confidence);
       
-          var visits_per_bucket = params.visits / params.variants;
-          set_visits_per_bucket(visits_per_bucket);
+          var treatment_visits = params.visits * params.percentage / 100.0,
+              control_visits = params.visits - treatment_visits;
+          set_treatment_visits(treatment_visits);
 
-          var flip = function(conversion_percent) {
-              return visits_per_bucket * conversion_percent / 100.0;
+          var flip = function(visits, conversion_percent) {
+              return visits * conversion_percent / 100.0;
           };
 
-          var conversions_control = 0,
-              conversions_treatment = 0,
-              day = 0;
-
-          var significant = function(control, treatment, visits) {
+          var significant = function(control, c_visits, treatment, t_visits) {
               var st = stats.difference_of_proportions(
-                  control, visits, treatment, visits
+                  control, c_visits, treatment, t_visits
               );
           
               var alpha = (100 - params.confidence) / 100.0;
               return st.p < alpha;
           };
 
+          var conversions_control = 0,
+              conversions_treatment = 0,
+              day = 0;
+
           while(true) {
               day++;
-              conversions_control += flip(params.conversion);
-              conversions_treatment += flip(treatment_conversion);
-              var v = visits_per_bucket * day;
-              if(significant(conversions_control, conversions_treatment, v)) {
+              conversions_control += flip(control_visits, params.conversion);
+              conversions_treatment += flip(treatment_visits, treatment_conversion);
+              var c_v = control_visits * day, t_v = treatment_visits * day;
+              if(significant(conversions_control, c_v, conversions_treatment, t_v)) {
                   return this.displayDays(day);
               }
               if(day > 365*10) {
