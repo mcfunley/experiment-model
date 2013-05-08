@@ -1,0 +1,44 @@
+header h1, footer h5, #answer {
+    text-align: center;
+}
+
+footer h5 {
+    font-weight: normal;
+}
+
+header h1, #answer {
+    margin: 40px 0px 40px 0px;
+}
+
+#answer {
+    width: 100%;
+}
+
+#days.short { color: green; }
+#days.medium { color: orange; }
+#days.long { color: red; }
+
+.error {
+    text-shadow: 2px 2px #ff0000;
+}
+
+.detail {
+    display: none;
+    font-size: 14px; 
+    line-height: 20px;
+}
+
+input {
+    width: 100px;
+}
+
+.secondary-calc {
+    font-style: italic;
+}
+
+.question {
+    font-size: 24.5px;
+    line-height: 60px;
+}
+
+

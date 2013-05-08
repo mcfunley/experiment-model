@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>How long will your experiment take?</title>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="experiment.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script type="text/javascript" src="stats.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid">
+
+      <header>
+        <h1>How long will your experiment take?</h1>
+      </header>
+
+      <div class="row-fluid question">
+        <div class="span6 offset2">
+          How many eligible visits do you have per day?
+        </div>
+        <div class="span1">
+          <input name="visits" placeholder="100,000"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div class="span7 offset2">
+          This is the number of people visiting your site that <em>could</em> see the change on a given day.
+        </div>
+      </div>
+
+      <div class="row-fluid question">
+        <div class="span6 offset2">
+          How many variants will you have?
+        </div>
+        <div class="span1">
+          <input name="variants" placeholder="2"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div class="span7 offset2">
+          This is how many versions of your feature you'll be testing at once, including the control. We assume that you will divide the population evenly. So two variants implies a 50/50 test.
+        </div>
+      </div>
+
+      <div class="row-fluid question">
+        <div class="span6 offset2">
+          What is your current conversion rate?
+        </div>
+        <div class="span1">
+          <input name="conversion" placeholder="4.0%"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div class="span7 offset2">
+          This is the percentage of your eligible visitors that currently complete your goal (e.g. purchasing or signing up).
+        </div>
+      </div>
+
+      <div class="row-fluid question">
+        <div class="span6 offset2">
+          How will you change conversion?
+        </div>
+        <div class="span1">
+          <input name="lift" placeholder="+1.0%"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div class="span7 offset2">
+          This is the percent by which you predict you will change your base conversion rate.
+          <p class="secondary-calc" id="treatment-conversion"></p>
+        </div>
+      </div>
+
+      <div class="row-fluid question">
+        <div class="span6 offset2">
+          How confident do you want to be of this?
+        </div>
+        <div class="span1">
+          <input name="confidence" placeholder="95%"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div class="span7 offset2">
+          This is the likelihood that you will reject a false positive result. If you are 95% confident in a result, this implies that with 5% probability the observed difference is in fact due to chance.
+        </div>
+      </div>
+
+      <div class="row-fluid question">
+        <h1 id="answer"></h1>
+      </div>
+
+      <footer>
+        <h5>By <a href="http://mcfunley.com">Dan McKinley</a>.</h5>
+      </footer>
+      
+    </div>
+  </body>
+</html>
