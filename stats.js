@@ -312,7 +312,7 @@
 
           var sp = $('<span id="days" />').addClass(cls);
           sp.text(d);
-          $('#answer').empty().append("You will measure significance in ", sp, ".");
+          $('#answer').empty().append("You should measure significance in ", sp, ".");
       },
 
       delay: 150,
