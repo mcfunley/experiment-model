@@ -82,6 +82,7 @@ footer h5 {
 
 .secondary-calc {
     color: #4169E1;
+    display: inline-block;
 }
 
 .question input {
