@@ -1,22 +1,65 @@
-header h1, footer h5, #answer, #share {
+body {
+    background-image: -o-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+    background-image: -moz-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+    background-image: -webkit-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+    background-image: -ms-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+    background-image: linear-gradient(-49deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+}
+
+.container-fluid {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background: white;
+    border-radius: 3px;
+}
+
+header, #answer {
+    text-align: center;
+}
+
+header {
+    border-bottom: 1px solid #eee;
+}
+
+header h1 {
+    font-size: 30px;
+    margin-top: 42px;
+    margin-bottom: 42px;
+}
+
+h1#answer, .question {
+    font-size: 24px;
+    line-height: 32px;
+    margin-top: 42px;
+    margin-bottom: 0;
+}
+
+#answer-row {
+    border-top: 1px solid #eee;
+    margin-top: 52px;
+    margin-bottom: 52px;
+}
+
+
+footer {
+    color: #999;
+    text-align: center;
+    padding: 40px;
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+footer h5,{
     text-align: center;
 }
 
 footer h5 {
     font-weight: normal;
-}
-
-header h1, #answer-row {
-    margin: 40px 0px 40px 0px;
-}
-
-#answer, #share {
-    width: 100%;
-}
-
-#share { 
-    line-height: 30px; 
-    font-size: 14px;
+    margin: 0;
+    line-height: 30px;
 }
 
 #days.short { color: green; }
@@ -29,25 +72,42 @@ header h1, #answer-row {
 
 .detail {
     display: none;
-    font-size: 14px; 
-    line-height: 20px;
     color: #585858;
 }
 
-input {
-    width: 100px;
+.detail, .secondary-calc {
+    font-size: 14px; 
+    line-height: 20px;
 }
 
 .secondary-calc {
-    font-style: italic;
-    font-weight: bold;
+    color: #4169E1;
 }
 
-.question {
-    font-size: 24.5px;
-    line-height: 60px;
+.question input {
+    width: 100px;
+    padding: 4px;
+    outline-color: white;
+    border: 1px solid #e2e2e2;
+    border-radius: 3px;
+    transition: border-color 0.5s;
+        -webkit-transition: border-color 0.5s;
+        -moz-transition: border-color 0.5s;
 }
 
-.follow iframe {
+.question input:focus {
+    border-color: #4169E1;
+    outline: none;
+}
 
+#share {
+    position: relative;
+    top: 5px;
+    display: inline-block;
+}
+
+.follow {
+    position: relative;
+    top: 5px;
+    margin: 0 20px;
 }
