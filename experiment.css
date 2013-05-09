@@ -1,3 +1,7 @@
+html {
+    height: 100%;
+}
+
 body {
     background-image: -o-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
     background-image: -moz-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
