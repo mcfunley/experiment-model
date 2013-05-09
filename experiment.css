@@ -12,13 +12,20 @@ body {
 }
 
 .container-fluid {
-    margin-right: 20px;
-    margin-left: 20px;
     margin-top: 20px;
+    background: white;
     padding-right: 20px;
     padding-left: 20px;
-    background: white;
     border-radius: 3px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+@media (max-width: 480px) {
+    body { padding: 5px; }
+    .container-fluid { 	
+	margin: 0;
+    }
 }
 
 header, #answer {
