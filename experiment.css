@@ -8,6 +8,7 @@ body {
     background-image: -webkit-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
     background-image: -ms-linear-gradient(41deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
     background-image: linear-gradient(-49deg, #F8F3F7 0%, #F5F5F0 49%, #DBE1E9 100%);
+    background-attachment: fixed;
 }
 
 .container-fluid {
