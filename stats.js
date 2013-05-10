@@ -196,10 +196,18 @@
       $("#answer").text(text);
   }
 
-  function set_treatment_conv(value) {
+  function set_treatment_conv(treatment_conv, visits, control_conv) {
       $('#treatment-conversion').text(
           'Conversion in the treatment group: ' +
-          value.toFixed(2) + '%'
+          treatment_conv.toFixed(2) + '%'
+      );
+      $('#treatment-daily-conv').text(
+          'Total daily conversions with the treatment rate: ' +
+          Math.round(visits*treatment_conv / 100)
+      );
+      $('#treatment-conv-diff').text(
+          'Increase in daily conversions: ' + 
+          Math.round(visits*(treatment_conv - control_conv) / 100)
       );
   }
 
@@ -261,7 +269,8 @@
       
           var treatment_conversion = 
                   params.conversion * (1 + params.lift / 100.0);
-          set_treatment_conv(treatment_conversion);
+          set_treatment_conv(treatment_conversion, params.visits, 
+                             params.conversion);
           set_conversions(params.visits, params.conversion);
           set_alpha(params.confidence);
       
