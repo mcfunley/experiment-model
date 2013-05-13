@@ -213,11 +213,9 @@
       function confidence_tips() {
           var c = params.confidence;
           $('#confidence-detail').empty().append(
-              'If you are ', 
-              highlight(c + '%'), 
-              ' confident in a result, this implies that with ',
+              'In the case that there really is no effect, there is a ',
               highlight(100 - c + '%'), 
-              ' probability the observed difference is in fact due to chance.'
+              ' probability that you will think there is anyway due to random chance.'
           );
       }
 
@@ -229,9 +227,9 @@
       function power_tips() {
           var beta = (100 - params.power);
           $('#power-detail').empty().append(
-              'There is a ', 
+              'In the case that the effectis real, there is a ',
               highlight(beta + '%'),
-              ' chance that the effect will be real but your significance test will reject it.'
+              ' chance that your experiment will fail to see it.'
           );
       }
 
