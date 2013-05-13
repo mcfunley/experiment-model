@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script type="text/javascript" src="jquery-deparam.min.js"></script>
+    <script type="text/javascript" src="countdown.min.js"></script>
     <script type="text/javascript" src="stats.js"></script>
   </head>
   <body>
@@ -97,11 +99,24 @@
         </div>
       </div>
 
+
+      <div class="row-fluid question">
+        <div class="span7 offset1">
+          How likely should you be to detect the change?
+        </div>
+        <div class="span1">
+          <input name="power" placeholder="80%"></input>
+        </div>
+      </div>
+
+      <div class="row-fluid detail">
+        <div id="power-detail" class="span6 offset1">
+        </div>
+      </div>
+
+
       <div id="answer-row" class="row-fluid">
         <h1 id="answer" class=""></h1>
-        <!--p class="more-info">
-          <a href="#" id="more-info">More Info</a>
-        </p-->
       </div>
       
     </div>

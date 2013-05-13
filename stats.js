@@ -1,143 +1,128 @@
 ;(function($) {
 
-  $.deparam = function( params, coerce ) {
-    var decode = decodeURIComponent;
-    var obj = {},
-      coerce_types = { 'true': !0, 'false': !1, 'null': null };
-    
-    // Iterate over all name=value pairs.
-    $.each( params.replace( /\+/g, ' ' ).split( '&' ), function(j,v){
-      var param = v.split( '=' ),
-        key = decode( param[0] ),
-        val,
-        cur = obj,
-        i = 0,
-        
-        // If key is more complex than 'foo', like 'a[]' or 'a[b][c]', split it
-        // into its component parts.
-        keys = key.split( '][' ),
-        keys_last = keys.length - 1;
-      
-      // If the first keys part contains [ and the last ends with ], then []
-      // are correctly balanced.
-      if ( /\[/.test( keys[0] ) && /\]$/.test( keys[ keys_last ] ) ) {
-        // Remove the trailing ] from the last keys part.
-        keys[ keys_last ] = keys[ keys_last ].replace( /\]$/, '' );
-        
-        // Split first keys part into two parts on the [ and add them back onto
-        // the beginning of the keys array.
-        keys = keys.shift().split('[').concat( keys );
-        
-        keys_last = keys.length - 1;
-      } else {
-        // Basic 'foo' style key.
-        keys_last = 0;
-      }
-      
-      // Are we dealing with a name=value pair, or just a name?
-      if ( param.length === 2 ) {
-        val = decode( param[1] );
-        
-        // Coerce values.
-        if ( coerce ) {
-          val = val && !isNaN(val)            ? +val              // number
-            : val === 'undefined'             ? undefined         // undefined
-            : coerce_types[val] !== undefined ? coerce_types[val] // true, false, null
-            : val;                                                // string
-        }
-        
-        if ( keys_last ) {
-          // Complex key, build deep object structure based on a few rules:
-          // * The 'cur' pointer starts at the object top-level.
-          // * [] = array push (n is set to array length), [n] = array if n is 
-          //   numeric, otherwise object.
-          // * If at the last keys part, set the value.
-          // * For each keys part, if the current level is undefined create an
-          //   object or array based on the type of the next keys part.
-          // * Move the 'cur' pointer to the next level.
-          // * Rinse & repeat.
-          for ( ; i <= keys_last; i++ ) {
-            key = keys[i] === '' ? cur.length : keys[i];
-            cur = cur[key] = i < keys_last
-              ? cur[key] || ( keys[i+1] && isNaN( keys[i+1] ) ? {} : [] )
-              : val;
-          }
-          
-        } else {
-          // Simple key, even simpler rules, since only scalars and shallow
-          // arrays are allowed.
-          
-          if ( $.isArray( obj[key] ) ) {
-            // val is already an array, so push on the next value.
-            obj[key].push( val );
-            
-          } else if ( obj[key] !== undefined ) {
-            // val isn't an array, but since a second value has been specified,
-            // convert val into an array.
-            obj[key] = [ obj[key], val ];
-            
-          } else {
-            // val is a scalar.
-            obj[key] = val;
-          }
-        }
-        
-      } else if ( key ) {
-        // No value was defined, so set something meaningful.
-        obj[key] = coerce
-          ? undefined
-          : '';
-      }
-    });
-    
-    return obj;
-  };
-
   window.stats = {
-      
-      difference_of_proportions: function(s1,n1,s2,n2) {
-          var difference_under_null = 0;
 
-          var p1 = s1 / n1, p2 = s2 / n2;
-          var p_pooled = (s1 + s2) / (n1 + n2);
-          var pq = p_pooled * (1 - p_pooled);
-          var se = Math.sqrt((pq / n1) + (pq / n2));
-
-          var z = (p1 - p2 - difference_under_null) / se;
-
-          return { z: z, p: this.z_to_p_two_tail(z), p1: p1, p2: p2 };
+      days_required: function(visits, percent, conversion, lift, 
+                              confidence, power) {
+          var p1 = conversion / 100;
+          var p2 = conversion / 100 * (1 + lift / 100);
+          var alpha = (100 - confidence) / 100;
+          var r = percent / (100 - percent);
+          var ss = this.cps_ssize(p1, p2, alpha, power / 100, r);
+          
+          var treatment_per_day = visits * (percent / 100);
+          return Math.ceil(ss.group2 / treatment_per_day);
       },
 
-      z_to_p_two_tail: function(z) {
-          return (1 - this.standard_normal_cdf(Math.abs(z))) * 2;
+      // Casagrande, Pike & Smith sample size (two sided)
+      // http://www.bios.unc.edu/~mhudgens/bios/662/2008fall/casagrande.pdf
+      cps_ssize: function(p1, p2, alpha, power, r) {
+          var za = this.qnorm(1 - alpha / 2);
+          var zb = this.qnorm(power);
+          var p = (p1 + r*p2) / (1 + r);
+          var n = za * Math.sqrt((1 + r) * p * (1 - p)) + 
+                   zb * Math.sqrt(r * p1 * (1 - p1) + p2 * (1 - p2));
+          var m1 = Math.pow(n, 2) / Math.pow(r * (p1 - p2), 2);
+          var m = (
+              (m1 / 4) * 
+              Math.pow(
+                  1 + Math.sqrt(1 + 2 * (r + 1) / 
+                                (m1 * r * Math.abs(p1 - p2)))
+                  , 2)
+          );
+          return { group1: Math.ceil(m), group2: Math.ceil(m * r) };
       },
 
-      standard_normal_cdf: function(x) {
-          if(x == 0) {
-              return 0.5;
+      // From Wichura, Algorithm AS 241: The Percentage Points of the 
+      // Normal Distribution
+      // http://www-personal.umich.edu/~jiankang/papers/paper/qnorm.pdf
+      qnorm : function(p) {
+          var a = [
+              3.3871328727963666080, 133.14166789178437745,
+              1971.5909503065514427, 13731.693765509461125,
+              45921.953931549871457, 67265.770927008700853,
+              33430.575583588128105, 2509.0809287301226727
+          ];
+          var b = [
+              42.313330701600911252, 687.18700749205790830,
+              5394.1960214247511077, 21213.794301586595867,
+              39307.895800092710610, 28729.085735721942674,
+              5226.4952788528545610
+          ];
+          var c = [
+              1.42343711074968357734, 4.63033784615654529590,
+              5.76949722146069140550, 3.64784832476320460504,
+              1.27045825245236838258, 0.241780725177450611770,
+              0.0227238449892691845833, 0.000774545014278341407640
+          ];
+          var d = [
+              2.05319162663775882187, 1.67638483018380384940,
+              0.689767334985100004550, 0.148103976427480074590,
+              0.0151986665636164571966, 0.000547593808499534494600,
+              1.05075007164441684324*1e-9
+          ];
+          var e = [
+              6.65790464350110377720, 5.46378491116411436990,
+              1.78482653991729133580, 0.296560571828504891230,
+              0.0265321895265761230930, 0.00124266094738807843860,
+              0.0000271155556874348757815, 2.01033439929228813265*1e-7
+          ];
+          var f = [
+              0.599832206555887937690, 0.136929880922735805310,
+              0.0148753612908506148525, 0.000786869131145613259100, 
+              1.84631831751005468180*1e-5, 1.42151175831644588870*1e-7,
+              2.04426310338993978564*1e-15
+          ];
+    
+          function term(r, xs) {
+              if(xs.length == 1) {
+                  return xs;
+              }
+              return xs[0] + r * term(r, xs.slice(1)); 
           }
-          if(x > 0) {
-              var b0 = 0.2316419,
-                  b1 = 0.319381530,
-                  b2 = -0.356563782,
-                  b3 = 1.781477937,
-                  b4 = -1.821255978,
-                  b5 = 1.33027442;
-              var t = 1 / (1 + (b0 * x));
 
-              return 1 - this.standard_normal_pdf(x) * (
-                  b1* t + 
-                  b2 * Math.pow(t, 2) +
-                  b3 * Math.pow(t, 3) +
-                  b4 * Math.pow(t, 4) + 
-                  b5 * Math.pow(t, 5)
-              );
+          function sign(x) {
+              return (x < 0 ? -1 : (x > 0 ? 1 : 0));
           }
-          return 1 - this.standard_normal_cdf(-1 * x);
+    
+          var r;
+          var q = p - 0.5; 
+          if(Math.abs(q) <= 0.425) {
+              r = 180625/1e6 - q*q;
+              return q * term(r, a) / (1 + r * term(r, b));
+          }
+    
+          r = q < 0 ? p : 1 - p;
+    
+          if(r <= 0) {
+              return 0;
+          }
+    
+          r = Math.sqrt(-Math.log(r));
+          if(r <= 5) {
+              r -= 1.6;
+              return sign(q) * term(r, c) / (1 + r * term(r, d));
+          }
+
+          r -= 5;
+          return sign(q) * term(r, e) / (1 + r * term(r, f));
       },
 
-      standard_normal_pdf: function(x) {
-          return Math.exp(-1 * (Math.pow(x, 2) / 2)) / Math.sqrt(2 * Math.PI);
+      qnorm_test : function() {
+          // test cases for the three branches of qnorm
+          var tests = [
+              [0.25, -0.6744897501960817],
+              [0.001, -3.090232306167814],
+              [1e-20, -9.262340089798408]
+          ];
+          var epsilon = 1e-12;
+          _.each(tests, function(t) {
+              var qn = qnorm(t[0]);
+              var ok = Math.abs(qn - t[1]) < epsilon;
+              console.log(
+                  "qnorm(" + t[0] + ") == " + t[1] + " --> " + 
+                      (ok ? "OK" : "FAILED (" + qn + ")"));
+          });
       }
 
   };
@@ -192,49 +177,74 @@
   };
 
 
-  function display(text) {
-      $("#answer").text(text);
-  }
+  var secondary_calcs = function(params) {
+      function lift_tips() {
+          var treatment_conv = params.conversion * (1 + params.lift / 100.0);
+          var daily_conv = Math.round(params.visits*treatment_conv / 100);
+          var daily_abs_conv = Math.round(
+              params.visits*(treatment_conv - params.conversion) / 100);
 
-  function set_treatment_conv(treatment_conv, visits, control_conv) {
-      $('#treatment-conversion').text(
-          'Conversion in the treatment group: ' +
-          treatment_conv.toFixed(2) + '%'
-      );
-      $('#treatment-daily-conv').text(
-          'Total daily conversions with the treatment rate: ' +
-          Math.round(visits*treatment_conv / 100)
-      );
-      $('#treatment-conv-diff').text(
-          'Increase in daily conversions: ' + 
-          Math.round(visits*(treatment_conv - control_conv) / 100)
-      );
-  }
+          $('#treatment-conversion').text(
+              'Conversion in the treatment group: ' +
+                  treatment_conv.toFixed(2) + '%'
+          );
+          $('#treatment-daily-conv').text(
+              'Total daily conversions with the treatment rate: ' +
+                  daily_conv
+          );
+          $('#treatment-conv-diff').text(
+              'Increase in daily conversions: ' + daily_abs_conv 
+          );
+      }
 
-  function set_treatment_visits(value) {
-      $('#visits-seeing-change').text(
-          'Visits per day seeing the change: ' + value
-      );
-  }
+      function percentage_tips() {
+          var treatment_visits = params.visits * params.percentage / 100.0;
+          $('#visits-seeing-change').text(
+              'Visits per day seeing the change: ' + treatment_visits
+          );
+      }
 
-  function set_alpha(pct_confidence) {
-      $('#confidence-detail').empty().append(
-          'If you are ', 
-          $('<span class="secondary-calc" />').text(pct_confidence + '%'), 
-          ' confident in a result, this implies that with ',
-          $('<span class="secondary-calc" />').text(100 - pct_confidence + '%'), 
-          ' probability the observed difference is in fact due to chance.'
-      );
-  }
+      function highlight(x) {
+          return $('<span class="secondary-calc" />').text(x);
+      }
 
-  function set_conversions(visits, rate_pct) {
-      var conv = visits * rate_pct / 100;
-      $('#converting-visitors').text('Converting visitors per day: ' + conv);
-  }
+      function confidence_tips() {
+          var c = params.confidence;
+          $('#confidence-detail').empty().append(
+              'If you are ', 
+              highlight(c + '%'), 
+              ' confident in a result, this implies that with ',
+              highlight(100 - c + '%'), 
+              ' probability the observed difference is in fact due to chance.'
+          );
+      }
 
-  function detail(el) {
-      return $(el).parents('.question').next('.detail');
-  }
+      function conversion_tips() {
+          var conv = params.visits * params.conversion / 100;
+          $('#converting-visitors').text('Converting visitors per day: ' + conv);
+      }
+
+      function power_tips() {
+          var beta = (100 - params.power);
+          $('#power-detail').empty().append(
+              'There is a ', 
+              highlight(beta + '%'),
+              ' chance that the effect will be real but your significance test will reject it.'
+          );
+      }
+
+      var x = {
+          update: function() {
+              conversion_tips();
+              confidence_tips();
+              percentage_tips();
+              lift_tips();
+              power_tips();
+          }
+      };
+
+      return x;
+  };
 
 
   var updater = {
@@ -245,7 +255,8 @@
               conversion: parser.percent('conversion'),
               confidence: parser.percent('confidence'),
               visits: parser.integer('visits'),
-              percentage:  parser.percent('percentage')
+              percentage:  parser.percent('percentage'),
+              power: parser.percent('power')
           };
       },
 
@@ -266,52 +277,21 @@
       update: function() {
           var params = this.get_params(true);
           this.updateHash();
-      
-          var treatment_conversion = 
-                  params.conversion * (1 + params.lift / 100.0);
-          set_treatment_conv(treatment_conversion, params.visits, 
-                             params.conversion);
-          set_conversions(params.visits, params.conversion);
-          set_alpha(params.confidence);
-      
-          var treatment_visits = params.visits * params.percentage / 100.0,
-              control_visits = params.visits - treatment_visits;
-          set_treatment_visits(treatment_visits);
 
-          var flip = function(visits, conversion_percent) {
-              return visits * conversion_percent / 100.0;
-          };
+          var s = new secondary_calcs(params);
+          s.update();            
 
-          var significant = function(control, c_visits, treatment, t_visits) {
-              var st = stats.difference_of_proportions(
-                  control, c_visits, treatment, t_visits
-              );
-          
-              var alpha = (100 - params.confidence) / 100.0;
-              return st.p < alpha;
-          };
-
-          var conversions_control = 0,
-              conversions_treatment = 0,
-              day = 0;
-
-          while(true) {
-              day++;
-              conversions_control += flip(control_visits, params.conversion);
-              conversions_treatment += flip(treatment_visits, treatment_conversion);
-              var c_v = control_visits * day, t_v = treatment_visits * day;
-              if(significant(conversions_control, c_v, conversions_treatment, t_v)) {
-                  return this.displayDays(day);
-              }
-              if(day > 365*10) {
-                  return display("It will take you over a decade to run " +
-                                 "this experiment.");
-              }
-          }
+          var days = stats.days_required(
+              params.visits, params.percentage, params.conversion,
+              params.lift, params.confidence, params.power
+          );
+          this.displayDays(days);
       },
 
       displayDays: function(days) {
-          var d = days + ((days == 1) ? " day" : " days");
+          var flags = countdown.YEARS | countdown.MONTHS | countdown.DAYS;
+          var c = countdown(new Date(2000,0,1), new Date(2000,0,1+days), flags);
+          var d = c.toString();
           var cls = "long";
           if(days <= 90) {
               cls = "medium";
@@ -325,14 +305,19 @@
           $('#answer').empty().append("You should measure significance in ", sp, ".");
       },
 
+
       delay: 150,
 
+      detail: function(el) {
+          return $(el).parents('.question').next('.detail');
+      },
+
       showDetail: function(el) {
-          detail(el).slideDown(this.delay);
+          this.detail(el).slideDown(this.delay);
       },
 
       hideDetail: function(el) {
-          detail(el).slideUp(this.delay);
+          this.detail(el).slideUp(this.delay);
       }
   };
 
