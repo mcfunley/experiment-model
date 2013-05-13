@@ -11,7 +11,9 @@
           var ss = this.cps_ssize(p1, p2, alpha, power / 100, r);
           
           var treatment_per_day = visits * (percent / 100);
-          return Math.ceil(ss.group2 / treatment_per_day);
+          var days = Math.ceil(ss.group2 / treatment_per_day);
+          //console.log(ss, days);
+          return days;
       },
 
       // Casagrande, Pike & Smith sample size (two sided)
@@ -290,14 +292,23 @@
 
       displayDays: function(days) {
           var flags = countdown.YEARS | countdown.MONTHS | countdown.DAYS;
-          var c = countdown(new Date(2000,0,1), new Date(2000,0,1+days), flags);
-          var d = c.toString();
+          if(days < 365/2) {
+              flags = countdown.DAYS;
+          }
+
           var cls = "long";
           if(days <= 90) {
               cls = "medium";
           }
           if(days <= 30) {
               cls = "short";
+          }
+
+          var c = countdown(new Date(2000,0,1), new Date(2000,0,1+days), flags);
+          var d = c.toString();
+          var m = /^([0-9]+ months),( and [0-9]+ days)/.exec(d);
+          if(m) {
+              d = m[1] + m[2];
           }
 
           var sp = $('<span id="days" />').addClass(cls);
