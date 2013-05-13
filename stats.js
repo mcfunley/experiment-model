@@ -215,7 +215,7 @@
           $('#confidence-detail').empty().append(
               'In the case that there really is no effect, there is a ',
               highlight(100 - c + '%'), 
-              ' probability that you will think there is anyway due to random chance.'
+              ' probability that you will think there is one anyway due to random chance.'
           );
       }
 
