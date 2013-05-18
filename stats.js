@@ -286,6 +286,7 @@
               params.lift, params.confidence, params.power
           );
           this.displayDays(days);
+          return true;
       },
 
       displayDays: function(days) {
@@ -323,10 +324,12 @@
 
       showDetail: function(el) {
           this.detail(el).slideDown(this.delay);
+          return true;
       },
 
       hideDetail: function(el) {
           this.detail(el).slideUp(this.delay);
+          return true;
       }
   };
 
@@ -357,11 +360,11 @@
       updater.update();
 
       $('input').bind('focus', function() {
-          updater.showDetail(this);
+          return updater.showDetail(this);
       }).bind('blur', function() {
-          updater.hideDetail(this);
+          return updater.hideDetail(this);
       }).bind('input', function(e) {
-          updater.update();
+          return updater.update();
       });
   });
 
