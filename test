@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/local/php5/bin/php -S localhost:8080
