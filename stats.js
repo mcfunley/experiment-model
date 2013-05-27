@@ -1,5 +1,28 @@
 ;(function($) {
 
+  String.prototype.commafy = function() {
+      return this.replace(/(.)(?=(.{3})+$)/g,"$1,");
+  };
+
+  
+  var formats = {
+      percent: function(v) {
+          return v.replace('%', '') + '%';
+      },
+
+      digits: function(v) {
+          return v.replace(',', '').commafy();
+      }
+  };
+
+  $.fn.applyFormat = function() {
+      var f = this.data('format');
+      var v = this.val().trim();
+      if(v) {
+          this.val(formats[f](v));
+      }
+  };
+
   window.stats = {
 
       days_required: function(visits, percent, conversion, lift, 
@@ -354,11 +377,7 @@
       }
   }
 
-  $(document).ready(function() {
-      parseHash();
-
-      updater.update();
-
+  function setupDetails() {
       $('input').bind('focus', function() {
           return updater.showDetail(this);
       }).bind('blur', function() {
@@ -366,6 +385,26 @@
       }).bind('input', function(e) {
           return updater.update();
       });
+  }
+
+  function formatAll() {
+      $('input').each(function() { $(this).applyFormat(); });
+  }
+
+
+  function setupValidation() {
+      $('input').blur(function() { 
+          $(this).applyFormat(); 
+          return true;
+      });
+  }
+
+  $(document).ready(function() {
+      parseHash();
+      formatAll();
+      setupValidation();
+      updater.update();
+      setupDetails();
   });
 
 })(jQuery);
