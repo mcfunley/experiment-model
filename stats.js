@@ -11,7 +11,7 @@
       },
 
       digits: function(v) {
-          return v.replace(',', '').commafy();
+          return v.replace(/,/g, '').commafy();
       }
   };
 
@@ -196,7 +196,7 @@
 
       integer: function(name) {
           return this.inp(name, function(v) {
-              return parseInt(v.replace(",", ""));
+              return parseInt(v.replace(/,/g, ""));
           });
       }
   };
