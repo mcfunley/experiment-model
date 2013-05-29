@@ -299,7 +299,7 @@
       },
 
       enforceNonzero: function(input, params) {
-          this.toggleError(input, params[input] != 0, 
+          this.toggleError(input, params[input] !== null && params[input] != 0, 
                            'Please enter a nonzero number.');
       },
 
