@@ -152,6 +152,10 @@
 
   };
 
+  function input_selector(name) {
+      return 'input[name="' + name + '"]';
+  }
+
   var parser = {
       use_placeholders: true,
 
@@ -162,12 +166,8 @@
           return $(selector).val();
       },
    
-      selector: function(name) {
-          return 'input[name="' + name + '"]';
-      },
-
       inp: function(name, f) {
-          var selector = this.selector(name);
+          var selector = input_selector(name);
           $(selector).removeClass('error');
           var v = this.val_or_ph(selector);
           if(v) {
@@ -269,6 +269,67 @@
       return x;
   };
 
+  var validator = {
+      validated: false,
+
+      validate: function(params) {
+          this.validated = true;
+
+          this.enforcePositive('visits', params);
+          this.enforcePositive('percentage', params);
+          this.enforcePositive('conversion', params);
+          this.enforceNonzero('lift', params);
+          this.enforcePositive('confidence', params);
+          this.enforcePositive('power', params);
+
+          if(!this.validated) {
+              $('#answer').empty().append(
+                  '<span class="error">',
+                  "Validation error!",
+                  '</span>'
+              );
+          }
+
+          return this.validated;
+      },
+
+      enforcePositive: function(input, params) {
+          this.toggleError(input, params[input] > 0,
+                           'Please enter a positive number.');
+      },
+
+      enforceNonzero: function(input, params) {
+          this.toggleError(input, params[input] != 0, 
+                           'Please enter a nonzero number.');
+      },
+
+      toggleError: function(input, condition, message) {
+          var inp = $(input_selector(input)); 
+          var q = inp.parents('.question');
+          var e = q.nextAll('.error').first();
+
+          if(!condition) {
+              this.validated = false;
+
+              updater.hideDetail(inp);
+              e.find('.message').text(message);
+              q.addClass('validation-error');
+              if(!e.is(':visible')) {
+                  e.slideDown(150);
+              }
+          } else {
+              q.removeClass('validation-error');
+              if(e.is(':visible')) {
+                  e.slideUp(150);
+              }
+              if(inp.is(':focus')) {
+                  updater.showDetail(inp);
+              }
+          }
+      }
+
+  };
+
 
   var updater = {
       get_params: function(use_placeholders) {
@@ -301,8 +362,12 @@
           var params = this.get_params(true);
           this.updateHash();
 
+          if(!validator.validate(params)) {
+              return false;
+          }
+
           var s = new secondary_calcs(params);
-          s.update();            
+          s.update();
 
           var days = stats.days_required(
               params.visits, params.percentage, params.conversion,
@@ -342,16 +407,22 @@
       delay: 150,
 
       detail: function(el) {
-          return $(el).parents('.question').next('.detail');
+          return $(el).parents('.question').nextAll('.detail').first();
       },
 
       showDetail: function(el) {
-          this.detail(el).slideDown(this.delay);
+          var d = this.detail(el);
+          if(!d.closest('.error').is(':visible')) {
+              d.slideDown(this.delay);
+          }
           return true;
       },
 
       hideDetail: function(el) {
-          this.detail(el).slideUp(this.delay);
+          var d = this.detail(el);
+          if(d.is(':visible')) {
+              d.slideUp(this.delay);
+          }
           return true;
       }
   };
@@ -372,7 +443,7 @@
       var params = $.deparam(h);
       for(var k in params) {
           if(params.hasOwnProperty(k)) {
-              $(parser.selector(k)).val(params[k]);
+              $(input_selector(k)).val(params[k]);
           }
       }
   }

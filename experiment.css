@@ -90,7 +90,13 @@ footer h5 {
     color: #585858;
 }
 
-.detail, .secondary-calc {
+.error {
+    display: none;
+    color: #E16941;
+    text-shadow: none;
+}
+
+.detail, .secondary-calc, .error {
     font-size: 14px; 
     line-height: 20px;
 }
@@ -114,6 +120,10 @@ footer h5 {
 .question input:focus {
     border-color: #4169E1;
     outline: none;
+}
+
+.question.validation-error input:focus, .question.validation-error input {
+    border-color: #e16941;
 }
 
 #share {
