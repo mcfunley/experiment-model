@@ -7,7 +7,7 @@
   
   var formats = {
       percent: function(v) {
-          return v.replace('%', '') + '%';
+          return v.replace(/%/g, '') + '%';
       },
 
       digits: function(v) {
