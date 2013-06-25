@@ -217,12 +217,11 @@
                   daily_conv
           );
 
-          var inctxt = 'Increase';
-          if(daily_abs_conv < 0) {
-              inctxt = 'Decrease';
+          if(daily_abs_conv > 0) {
+              daily_abs_conv = '+' + daily_abs_conv;
           }
           $('#treatment-conv-diff').text(
-              inctxt + ' in daily conversions: ' + daily_abs_conv 
+              'Change in daily conversions: ' + daily_abs_conv 
           );
       }
 
