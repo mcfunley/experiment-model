@@ -35,7 +35,6 @@
           
           var treatment_per_day = visits * (percent / 100);
           var days = Math.ceil(ss.group2 / treatment_per_day);
-          //console.log(ss, days);
           return days;
       },
 
@@ -217,8 +216,13 @@
               'Total daily conversions with the treatment rate: ' +
                   daily_conv
           );
+
+          var inctxt = 'Increase';
+          if(daily_abs_conv < 0) {
+              inctxt = 'Decrease';
+          }
           $('#treatment-conv-diff').text(
-              'Increase in daily conversions: ' + daily_abs_conv 
+              inctxt + ' in daily conversions: ' + daily_abs_conv 
           );
       }
 
