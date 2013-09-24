@@ -253,7 +253,7 @@
       function power_tips() {
           var beta = (100 - params.power);
           $('#power-detail').empty().append(
-              'In the case that the effectis real, there is a ',
+              'In the case that the effect is real, there is a ',
               highlight(beta + '%'),
               ' chance that your experiment will fail to see it.'
           );
