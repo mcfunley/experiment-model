@@ -4,4 +4,6 @@ You can use the experiment calculator at [http://www.experimentcalculator.com](h
 
 There is more information about this tool [on my blog](http://mcfunley.com/how-long-should-you-run-experiments).
 
-
+Thanks to:
+[Peter Keane](https://github.com/pkeane) for bug fixes.
+[Kim Bost](http://kimbost.com/) for the design.
