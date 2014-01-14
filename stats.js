@@ -46,7 +46,7 @@
           var p = (p1 + r*p2) / (1 + r);
           var n = za * Math.sqrt((1 + r) * p * (1 - p)) + 
                    zb * Math.sqrt(r * p1 * (1 - p1) + p2 * (1 - p2));
-          var m1 = Math.pow(n, 2) / Math.pow(r * (p1 - p2), 2);
+          var m1 = Math.pow(n, 2) / (r * Math.pow(p1 - p2, 2));
           var m = (
               (m1 / 4) * 
               Math.pow(
