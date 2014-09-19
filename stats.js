@@ -280,6 +280,7 @@
 
           this.enforcePositive('visits', params);
           this.enforcePositive('percentage', params);
+          this.enforceLessThan('percentage', 100, params);
           this.enforcePositive('conversion', params);
           this.enforceNonzero('lift', params);
           this.enforcePositive('confidence', params);
@@ -294,6 +295,13 @@
           }
 
           return this.validated;
+      },
+
+      enforceLessThan: function(input, val, params) {
+          this.toggleError(
+            input, params[input] < val, 
+            'Please enter a number less than ' + val + '.'
+          );
       },
 
       enforcePositive: function(input, params) {
