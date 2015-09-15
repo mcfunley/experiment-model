@@ -285,6 +285,7 @@
           this.enforceNonzero('lift', params);
           this.enforcePositive('confidence', params);
           this.enforcePositive('power', params);
+          this.enforceLessThan('power', 100, params);
 
           if(!this.validated) {
               $('#answer').empty().append(
