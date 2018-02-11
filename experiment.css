@@ -23,7 +23,7 @@ body {
 
 @media (max-width: 480px) {
     body { padding: 5px; }
-    .container-fluid { 	
+    .container-fluid {
 	margin: 0;
     }
 }
@@ -97,7 +97,7 @@ footer h5 {
 }
 
 .detail, .secondary-calc, .error {
-    font-size: 14px; 
+    font-size: 14px;
     line-height: 20px;
 }
 
@@ -136,4 +136,8 @@ footer h5 {
     position: relative;
     top: 5px;
     margin: 0 20px;
+}
+
+.club-index {
+  text-transform: uppercase;
 }
