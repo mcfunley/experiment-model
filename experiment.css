@@ -67,7 +67,7 @@ footer {
     margin-left: -10px;
 }
 
-footer h5,{
+footer h5 {
     text-align: center;
 }
 
@@ -126,18 +126,28 @@ footer h5 {
     border-color: #e16941;
 }
 
-#share {
-    position: relative;
-    top: 5px;
-    display: inline-block;
-}
-
-.follow {
-    position: relative;
-    top: 5px;
-    margin: 0 20px;
-}
-
 .club-index {
   text-transform: uppercase;
 }
+
+
+.bsky {
+    display: inline-flex;
+    align-items: center;
+  }
+  .bsky .handle {
+    margin-left: 10px;
+  }
+  .share a, .share a:visited {
+    color: #333;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .share a:hover {
+    text-decoration: none;
+    color: #555;
+  }
+  .share {
+    text-align: center;
+    margin: 10px 0;
+  }
